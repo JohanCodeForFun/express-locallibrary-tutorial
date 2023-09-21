@@ -1,3 +1,5 @@
+const dotenv = require('dotenv')
+dotenv.config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -8,6 +10,33 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
+const { Client } = require('pg');
+const pgp = require('pg-promise')();
+const connectionString = process.env.DB_CONNECTION_STRING;
+const db = pgp(process.env.DB_CONNECTION_STRING);
+
+const connectDb = async () => {
+  try {
+    const client = new Client({
+      connectionString: env.DB_CONNECTION_STRING,
+    });
+    await client.connect();
+    console.log('connected to postgresql');
+    const res = await client.query('SELECT $1::text as message', ['Hello world!']);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+db.one('SELECT $1 AS value', 123)
+.then(function (data) {
+  console.log('DATA:', data.value)
+}
+)
+.catch(function (error) {
+  console.log('ERROR:', error)
+})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
