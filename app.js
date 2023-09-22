@@ -1,42 +1,19 @@
 const dotenv = require('dotenv')
 dotenv.config();
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const db = require('./queries')
 
-var app = express();
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const booksRouter = require('./routes/books');
 
-const { Client } = require('pg');
-const pgp = require('pg-promise')();
-const connectionString = process.env.DB_CONNECTION_STRING;
-const db = pgp(process.env.DB_CONNECTION_STRING);
-
-const connectDb = async () => {
-  try {
-    const client = new Client({
-      connectionString: env.DB_CONNECTION_STRING,
-    });
-    await client.connect();
-    console.log('connected to postgresql');
-    const res = await client.query('SELECT $1::text as message', ['Hello world!']);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-db.one('SELECT $1 AS value', 123)
-.then(function (data) {
-  console.log('DATA:', data.value)
-}
-)
-.catch(function (error) {
-  console.log('ERROR:', error)
-})
+const app = express();
+const port = 3001;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -48,13 +25,24 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/users/:id', usersRouter);
+// app.use('/', indexRouter);
+// app.use('/users', usersRouter);
+// app.use('/users/:id', usersRouter);
+// app.use('/books', booksRouter);
+
+app.get('/books', db.getBooks);
+app.get('/books/:id', db.getBookById);
+app.post('/books', db.createBook);
+app.put('/books/:id', db.updateBook);
+app.delete('/books/:id', db.deleteBook);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
+});
+
+app.listen(port, () => {
+  console.log(`App running on port ${port}.`)
 });
 
 // error handler
