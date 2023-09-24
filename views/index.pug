@@ -1,5 +1,18 @@
 extends layout
 
 block content
+  a(href="/") Home
+  |
+  |
+  a(href='/books') Books
+  |
+  |
+  a(href='/about') About
+  |
+  |
   h1= title
   p Welcome to #{title}
+  |
+  |
+  footer 
+    p #{title} is a project by #{author}

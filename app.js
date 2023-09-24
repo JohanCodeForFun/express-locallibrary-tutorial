@@ -30,6 +30,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/users/:id', usersRouter);
 // app.use('/books', booksRouter);
 
+// API routes for PostgreSQL database, books table
+app.use('/', indexRouter);
+
+// app.use('/api', apiRouter);
 app.get('/books', db.getBooks);
 app.get('/books/:id', db.getBookById);
 app.post('/books', db.createBook);
