@@ -10,7 +10,7 @@ const db = require('./queries')
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const booksRouter = require('./routes/books');
+const catalogRouter = require('./routes/catalog');
 
 const app = express();
 const port = 3001;
@@ -25,13 +25,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use('/', indexRouter);
-// app.use('/users', usersRouter);
-// app.use('/users/:id', usersRouter);
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/catalog', catalogRouter);
 // app.use('/books', booksRouter);
 
 // API routes for PostgreSQL database, books table
-app.use('/', indexRouter);
 
 // app.use('/api', apiRouter);
 app.get('/books', db.getBooks);

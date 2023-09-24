@@ -28,6 +28,14 @@ const getBookById = async (req, res) => {
 
 const createBook = async (req, res) => {
   try {
+    /* write function to insert book into database with req.body
+    there are tables for books, authors, genres, and book_instances
+    book_instances is a table that has a foreign key for book_id
+    book_id is a foreign key for authors, genres, and book_instances
+    book_instances has a foreign key for status_id
+    status_id is a foreign key for status */
+
+
     const { book_title, book_summary, book_isbn } = req.body;
     const newBook = await pool.query('INSERT INTO books (book_title, book_summary, book_isbn) VALUES ($1, $2, $3) RETURNING *', [book_title, book_summary, book_isbn]);
     res.status(200).json(newBook.rows);
