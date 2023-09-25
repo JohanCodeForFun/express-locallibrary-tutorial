@@ -1,12 +1,49 @@
 const asyncHandler = require("express-async-handler");
 
 exports.index = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Site Home Page");
+  // Get details of books, book instances, authors and genre counts (in parallel)
+
+  // count of books in postgresql database
+  // SELECT count(*) FROM books; // count rows in books table
+  // SELECT * FROM books; // select all rows in books table
+
+  // count of authors in postgresql database
+
+  const [ numBooks 
+  ] = await Promise.all([
+    this.book_count()
+  ]);
+
+  res.render("index", {
+    title: "Local Library Home",
+    book_count: numBooks,
+    // book_instance_count: numBookInstances,
+    // book_instance_available_count: numBookInstancesAvailable,
+    // authorcoint: numAuthors,
+    // genre_count: numGenres,
+  });
 });
 
 // Display list of all books.
 exports.book_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Book list");
+  try {
+    console.log('getBooks');
+    const books = await pool.query('SELECT * FROM books ORDER BY id ASC');
+    res.status(200).json(books.rows);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+exports.book_count = asyncHandler(async (req, res, next) => {
+  try {
+    console.log('getBooks');
+    const books = await pool.query('SELECT count(*) FROM books');
+    console.log("here", books)
+    res.status(200).json(books);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // Display detail page for a specific book.

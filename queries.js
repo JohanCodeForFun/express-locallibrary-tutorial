@@ -16,6 +16,16 @@ const getBooks = async (req, res) => {
   }
 }
 
+const getBooksCount = async (req, res) => {
+  try {
+    console.log('getBooks');
+    const books = await pool.query('SELECT * FROM books ORDER BY id ASC');
+    res.status(200).json(books.rows);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 const getBookById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -67,6 +77,7 @@ const deleteBook = async (req, res) => {
 
 module.exports = {
   getBooks,
+  getBooksCount,
   getBookById,
   createBook,
   updateBook,
