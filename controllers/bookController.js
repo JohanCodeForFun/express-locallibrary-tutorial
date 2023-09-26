@@ -1,5 +1,11 @@
 const asyncHandler = require("express-async-handler");
 
+const connectionString = process.env.DB_CONNECTION_STRING;
+const Pool = require('pg').Pool;
+const pool = new Pool({
+  connectionString,
+});
+
 exports.index = asyncHandler(async (req, res, next) => {
   // Get details of books, book instances, authors and genre counts (in parallel)
 
@@ -9,10 +15,12 @@ exports.index = asyncHandler(async (req, res, next) => {
 
   // count of authors in postgresql database
 
-  const [ numBooks 
+  const [
+    numBooks
   ] = await Promise.all([
-    this.book_count()
+    this.book_count(),
   ]);
+
 
   res.render("index", {
     title: "Local Library Home",
@@ -27,9 +35,12 @@ exports.index = asyncHandler(async (req, res, next) => {
 // Display list of all books.
 exports.book_list = asyncHandler(async (req, res, next) => {
   try {
-    console.log('getBooks');
-    const books = await pool.query('SELECT * FROM books ORDER BY id ASC');
-    res.status(200).json(books.rows);
+    const books = await pool.query('SELECT * FROM books ORDER BY book_id ASC');
+
+    res.render("book_list", {
+      title: "Book List",
+      book_list: books.rows
+    });
   } catch (error) {
     console.log(error);
   }
@@ -37,10 +48,9 @@ exports.book_list = asyncHandler(async (req, res, next) => {
 
 exports.book_count = asyncHandler(async (req, res, next) => {
   try {
-    console.log('getBooks');
     const books = await pool.query('SELECT count(*) FROM books');
-    console.log("here", books)
-    res.status(200).json(books);
+    return books.rows[0].count;
+
   } catch (error) {
     console.log(error);
   }
