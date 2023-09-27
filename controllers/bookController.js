@@ -9,12 +9,6 @@ const pool = new Pool({
 exports.index = asyncHandler(async (req, res, next) => {
   // Get details of books, book instances, authors and genre counts (in parallel)
 
-  // count of books in postgresql database
-  // SELECT count(*) FROM books; // count rows in books table
-  // SELECT * FROM books; // select all rows in books table
-
-  // count of authors in postgresql database
-
   const [
     numBooks
   ] = await Promise.all([
