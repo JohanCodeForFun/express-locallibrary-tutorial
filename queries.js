@@ -9,7 +9,7 @@ const pool = new Pool({
 const getBooks = async (req, res) => {
   try {
     console.log('getBooks');
-    const books = await pool.query('SELECT * FROM books ORDER BY id ASC');
+    const books = await pool.query('SELECT * FROM books ORDER BY book_id ASC');
     res.status(200).json(books.rows);
   } catch (error) {
     console.log(error);
@@ -19,8 +19,8 @@ const getBooks = async (req, res) => {
 const getBooksCount = async (req, res) => {
   try {
     console.log('getBooks');
-    const books = await pool.query('SELECT * FROM books ORDER BY id ASC');
-    res.status(200).json(books.rows);
+    const books = await pool.query('SELECT count(*) FROM books');
+    return books.rows[0].count;
   } catch (error) {
     console.log(error);
   }

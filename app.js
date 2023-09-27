@@ -33,11 +33,11 @@ app.use('/catalog', catalogRouter);
 // API routes for PostgreSQL database, books table
 
 // app.use('/api', apiRouter);
-app.get('/books', db.getBooks);
-app.get('/books/:id', db.getBookById);
-app.post('/books', db.createBook);
-app.put('/books/:id', db.updateBook);
-app.delete('/books/:id', db.deleteBook);
+app.get('/api/books', db.getBooks);
+app.get('/api/books/:id', db.getBookById);
+app.post('/api/books', db.createBook);
+app.put('/api/books/:id', db.updateBook);
+app.delete('/api/books/:id', db.deleteBook);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
