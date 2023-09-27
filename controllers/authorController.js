@@ -1,8 +1,23 @@
 const asyncHandler = require("express-async-handler");
 
+const connectionString = process.env.DB_CONNECTION_STRING;
+const Pool = require('pg').Pool;
+const pool = new Pool({
+  connectionString,
+});
+
 // Display list of all Authors.
 exports.author_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Author list");
+  try {
+    const authors = await pool.query('SELECT * FROM authors ORDER BY author_id ASC');
+
+    res.render("author_list", {
+      title: "Author List",
+      author_list: authors.rows
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // Display detail page for a specific Author.
