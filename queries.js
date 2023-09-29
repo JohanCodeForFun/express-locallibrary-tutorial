@@ -10,7 +10,8 @@ const getBooks = async (req, res) => {
   try {
     console.log('getBooks');
     const books = await pool.query('SELECT * FROM books ORDER BY book_id ASC');
-    res.status(200).json(books.rows);
+    res.status(200);
+    return res.json(books.rows);
   } catch (error) {
     console.log(error);
   }
@@ -20,6 +21,7 @@ const getBooksCount = async (req, res) => {
   try {
     console.log('getBooks');
     const books = await pool.query('SELECT count(*) FROM books');
+    res.status(200);
     return books.rows[0].count;
   } catch (error) {
     console.log(error);
@@ -30,7 +32,8 @@ const getBookById = async (req, res) => {
   try {
     const { id } = req.params;
     const book = await pool.query('SELECT * FROM books WHERE book_id = $1', [id]);
-    res.status(200).json(book.rows);
+    res.status(200)
+    return res.json(book.rows);
   } catch (error) {
     console.log(error);
   }
