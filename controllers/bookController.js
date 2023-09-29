@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+const { bookinstance_count } = require("./bookinstanceController");
 
 const connectionString = process.env.DB_CONNECTION_STRING;
 const Pool = require('pg').Pool;
@@ -10,16 +11,18 @@ exports.index = asyncHandler(async (req, res, next) => {
   // Get details of books, book instances, authors and genre counts (in parallel)
 
   const [
-    numBooks
+    numBooks,
+    numBookInstances,
   ] = await Promise.all([
     this.book_count(),
+    bookinstance_count(),
   ]);
 
 
   res.render("index", {
     title: "Local Library Home",
     book_count: numBooks,
-    // book_instance_count: numBookInstances,
+    book_instance_count: numBookInstances,
     // book_instance_available_count: numBookInstancesAvailable,
     // authorcoint: numAuthors,
     // genre_count: numGenres,
@@ -43,6 +46,7 @@ exports.book_list = asyncHandler(async (req, res, next) => {
 exports.book_count = asyncHandler(async (req, res, next) => {
   try {
     const books = await pool.query('SELECT count(*) FROM books');
+    console.log("query for book count", books.rows[0].count)
     return books.rows[0].count;
 
   } catch (error) {
@@ -52,7 +56,19 @@ exports.book_count = asyncHandler(async (req, res, next) => {
 
 // Display detail page for a specific book.
 exports.book_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: Book detail: ${req.params.id}`);
+  try {
+    const book = await pool.query('SELECT * FROM books WHERE book_id = $1', [req.params.id]);
+    console.log("query for book", req.params.id)
+
+    // return book;
+
+    res.render("book_detail", {
+      title: "Book Detail",
+      book: book.rows
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // Display book create form on GET.

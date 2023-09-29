@@ -1,5 +1,22 @@
 const asyncHandler = require("express-async-handler");
 
+const connectionString = process.env.DB_CONNECTION_STRING;
+const Pool = require('pg').Pool;
+const pool = new Pool({
+  connectionString,
+});
+
+// Count all BookInstances.
+exports.bookinstance_count = asyncHandler(async (req, res, next) => {
+  try {
+    const bookinstanceCount = await pool.query('SELECT count(*) FROM booksinstances');
+    console.log("query for book count", bookinstanceCount.rows[0].count)
+    return bookinstanceCount.rows[0].count;
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 // Display list of all BookInstances.
 exports.bookinstance_list = asyncHandler(async (req, res, next) => {
   res.send("NOT IMPLEMENTED: BookInstance list");
