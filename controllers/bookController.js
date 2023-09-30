@@ -32,7 +32,15 @@ exports.index = asyncHandler(async (req, res, next) => {
 // Display list of all books.
 exports.book_list = asyncHandler(async (req, res, next) => {
   try {
-    const books = await pool.query('SELECT * FROM books ORDER BY book_id ASC');
+    const books = await pool.query(`SELECT a.first_name,
+                                           a.family_name,
+                                           b.book_title,
+                                           b.book_summary,
+                                           b.url
+                                      FROM authors a
+                                INNER JOIN books b
+                                        ON a.book_id = b.book_id
+                                  ORDER BY b.book_id ASC`);
 
     res.render("book_list", {
       title: "Book List",
