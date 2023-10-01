@@ -1,8 +1,26 @@
 const asyncHandler = require("express-async-handler");
 
+const connectionString = process.env.DB_CONNECTION_STRING;
+const Pool = require('pg').Pool;
+const pool = new Pool({
+  connectionString,
+});
+
 // Display list of all Genre.
 exports.genre_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Genre list");
+  try {
+    const genre = await pool.query(`SELECT genre_name,
+                                           genre_url
+                                      FROM genres
+                                     ORDER BY genre_name ASC`);
+    
+    res.render("genre_list", {
+      title: "Genre  List",
+      genre_list: genre.rows
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // Display detail page for a specific Genre.
