@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+const { DateTime } = require("luxon");
 
 const connectionString = process.env.DB_CONNECTION_STRING;
 const Pool = require('pg').Pool;
@@ -19,7 +20,27 @@ exports.bookinstance_count = asyncHandler(async (req, res, next) => {
 
 // Display list of all BookInstances.
 exports.bookinstance_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance list");
+  try {
+    const books = await pool.query(`SELECT a.book_title,
+                                           a.book_summary,
+                                           a.book_imprint,
+                                           a.due_back,
+                                           a.book_status
+                                      FROM booksinstances a
+                                  ORDER BY a.book_title ASC`);
+
+    // format date
+    for (const book of books.rows) {
+      book.due_back = DateTime.fromJSDate(book.due_back).toLocaleString(DateTime.DATE_MED)
+    }
+    
+    res.render("bookinstance_list", {
+      title: "Book Instance List",
+      booksinstance_list: books.rows
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // Display detail page for a specific BookInstance.

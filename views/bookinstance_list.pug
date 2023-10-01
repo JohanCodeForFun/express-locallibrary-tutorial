@@ -4,16 +4,16 @@ block content
   h1= title
 
   ul
-    each val in bookinstance_list
+    each val in booksinstance_list
       li
-        a(href=val.url) #{val.book.title} : #{val.imprint} -
-        if val.status=='Available'
-          span.text-success #{val.status}
-        else if val.status=='Maintenance'
-          span.text-danger #{val.status}
+        a(href=val.url) #{val.book_title} : #{val.book_imprint} -
+        if val.book_status=='Available'
+          span.text-success #{val.book_status}
+        else if val.book_status=='Maintenance'
+          span.text-danger #{val.book_status}
         else
-          span.text-warning #{val.status}
-        if val.status!='Available'
+          span.text-warning #{val.book_status}
+        if val.book_status!='Available'
           span  (Due: #{val.due_back} )
 
     else
