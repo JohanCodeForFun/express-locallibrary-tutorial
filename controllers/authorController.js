@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+const { DateTime } = require("luxon");
 
 const connectionString = process.env.DB_CONNECTION_STRING;
 const Pool = require('pg').Pool;
@@ -9,7 +10,20 @@ const pool = new Pool({
 // Display list of all Authors.
 exports.author_list = asyncHandler(async (req, res, next) => {
   try {
-    const authors = await pool.query('SELECT * FROM authors ORDER BY author_id ASC');
+    const authors = await pool.query(`SELECT
+                                            first_name,
+                                            family_name,
+                                            date_of_birth,
+                                            date_of_death
+                                            FROM authors ORDER BY author_id ASC`);
+
+        // format date
+        for (const author of authors.rows) {
+          author.date_of_birth = DateTime.fromJSDate(author.date_of_birth).toLocaleString(DateTime.DATE_MED);
+          author.date_of_death ? author.date_of_death = DateTime.fromJSDate(author.date_of_death).toLocaleString(DateTime.DATE_MED) : '';
+        }
+
+        
 
     res.render("author_list", {
       title: "Author List",
